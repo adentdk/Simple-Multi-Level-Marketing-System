@@ -1,0 +1,12 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "paketchat",
+    "database": "test_Sistem MLM Sederhana",
+    "host": "172.17.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "use_env_variable": "DB_URL"
+  }
+}
