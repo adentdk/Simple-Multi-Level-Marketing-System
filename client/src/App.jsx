@@ -8,26 +8,74 @@ function App() {
 
   return (
     <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+
+      <figure>
+        <figcaption>Example DOM structure diagram</figcaption>
+        <ul class="tree">
+          <li><code>html</code>
+            <ul>
+              <li><code>head</code>
+                <ul>
+                  <li><code>title</code></li>
+                </ul>
+              </li>
+              <li><code>body</code>
+                <ul>
+                  <li><code>header</code>
+                    <ul>
+                      <li><code>h1</code></li>
+                      <li><code>p</code></li>
+                    </ul>
+                  </li>
+                  <li><code>nav</code>
+                    <ul>
+                      <li><code>a</code></li>
+                      <li><code>a</code></li>
+                      <li><code>a</code></li>
+                      <li><code>a</code></li>
+                    </ul>
+                  </li>
+                  <li><code>main</code>
+                    <ul>
+                      <li><code>h1</code></li>
+                      <li><code>article</code>
+                        <ul>
+                          <li><code>h2</code></li>
+                          <li><code>p</code></li>
+                          <li><code>p</code></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li><code>aside</code>
+                    <ul>
+                      <li><code>h2</code></li>
+                      <li><code>p</code></li>
+                      <li><code>p</code>
+                        <ul>
+                          <li><code>a</code></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                  <li><code>footer</code>
+                    <ul>
+                      <li><code>nav</code>
+                        <ul>
+                          <li><code>a</code></li>
+                          <li><code>a</code></li>
+                          <li><code>a</code></li>
+                          <li><code>a</code></li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </figure>
     </div>
   )
 }
