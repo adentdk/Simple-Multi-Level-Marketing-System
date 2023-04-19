@@ -1,7 +1,6 @@
-import classNames from "classnames";
-import { useCallback, useEffect, useMemo, useState } from "react"
-import MemberTreeView from "../components/MemberTreeView";
-import AddNewMember from "../components/AddNewMember";
+import { useCallback, useEffect, useState } from "react"
+import MemberTreeView from "./components/MemberTreeView";
+import AddNewMember from "./components/AddNewMember";
 
 function Home() {
   const [loading, setLoading] = useState(false);
