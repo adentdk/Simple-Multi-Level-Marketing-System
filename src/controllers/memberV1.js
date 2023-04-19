@@ -52,7 +52,7 @@ exports.getMemberList = async (req, res, next) => {
 
     response.sendJson(res, {
       status: 200,
-      data: members,
+      data: members.map(member => member.toCustomJSON()),
     })
   } catch (error) {
     next(error);
@@ -70,7 +70,7 @@ exports.createMember = async (req, res, next) => {
   } = req;
 
   try {
-    const member = Member.create({
+    const member = await Member.create({
       ...memberValues,
       createdBy: authId,
       updatedBy: authId,

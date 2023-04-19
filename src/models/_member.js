@@ -4,6 +4,13 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Member extends Model {
+    toCustomJSON() {
+      return {
+        ...this.toJSON(),
+        nextLevelCount: parseInt(this.dataValues.nextLevelCount, 10) || null,
+        bonuses: parseFloat(this.dataValues.bonuses) || null,
+      }
+    }
     /**
      * Helper method for defining associations.
      * This method is not a part of DataTypes lifecycle.
