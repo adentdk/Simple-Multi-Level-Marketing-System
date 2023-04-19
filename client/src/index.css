@@ -1,23 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* It's supposed to look like a tree diagram */
 .tree, .tree ul, .tree li {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    position: relative;
+    @apply list-none m-0 p-0 relative;
 }
 
 .tree {
+    @apply text-center;
     margin: 0 0 1em;
-    text-align: center;
 }
 .tree, .tree ul {
-    display: table;
+    @apply table;
 }
 .tree ul {
-  width: 100%;
+    @apply w-full;
 }
     .tree li {
-        display: table-cell;
+        @apply table-cell;
         padding: .5em 0;
         vertical-align: top;
     }
@@ -33,23 +34,20 @@
         .tree li:first-child:before {left: 50%;}
         .tree li:last-child:before {right: 50%;}
 
-        .tree code, .tree span {
+        .tree div.box {
+            @apply bg-white;
             border: solid .1em #666;
             border-radius: .2em;
             display: inline-block;
-            margin: 0 .2em .5em;
+            margin: 0 1em .5em;
             padding: .2em .5em;
             position: relative;
+            min-width: 12em;
         }
         /* If the tree represents DOM structure */
-        .tree code {
-            font-family: monaco, Consolas, 'Lucida Console', monospace;
-        }
-
             /* | */
             .tree ul:before,
-            .tree code:before,
-            .tree span:before {
+            .tree div.box:before {
                 outline: solid 1px #666;
                 content: "";
                 height: .5em;
@@ -59,8 +57,7 @@
             .tree ul:before {
                 top: -.5em;
             }
-            .tree code:before,
-            .tree span:before {
+            .tree div.box:before {
                 top: -.55em;
             }
 
@@ -68,7 +65,6 @@
 .tree > li {margin-top: 0;}
     .tree > li:before,
     .tree > li:after,
-    .tree > li > code:before,
-    .tree > li > span:before {
+    .tree > li > div.box:before {
       outline: none;
     }

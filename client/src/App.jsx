@@ -5,12 +5,13 @@ import {
 
 import Home from './pages/Home'
 
-
 function App() {
   const queryClient = new QueryClient()
   return (
     <QueryClientProvider client={queryClient}>
-      <Home />
+      <main className="w-full">
+        <Home />
+      </main>
     </QueryClientProvider>
   )
 }
