@@ -91,20 +91,20 @@ exports.createMember = async (req, res, next) => {
   try {
     if (parentId) {
       const parent = await Member.findByPk(parentId);
-  
+
       if (!parent) {
         throw {
           status: StatusCodes.BAD_REQUEST,
           message: 'Parent not found'
         }
       }
-  
+
       const member = await parent.createChild({
         ...memberValues,
         createdBy: authId,
         updatedBy: authId,
       });
-  
+
       return response.sendJson(res, {
         status: StatusCodes.CREATED,
         data: member
@@ -214,6 +214,13 @@ exports.calculateBonuses = async (req, res, next) => {
 
   try {
     const member = await Member.findByPk(memberId);
+
+    if (!member) {
+      throw {
+        status: StatusCodes.BAD_REQUEST,
+        message: 'Member not Found'
+      }
+    }
 
     const promises = [];
 
