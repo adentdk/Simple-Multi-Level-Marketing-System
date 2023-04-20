@@ -9,13 +9,17 @@ function Home() {
   const [members, setMembers] = useState([]);
   const [memberBonus, setMemberBonus] = useState(null);
 
-  const handleFetchMember = useCallback((parentId = null) => {
+  const handleFetchMember = useCallback((parentId = null, deep = null) => {
     setLoading(true);
 
     let query = {}
 
     if (parentId) {
       query.parentId = parentId;
+    }
+
+    if (deep) {
+      query.deep = deep;
     }
 
     query = new URLSearchParams(query).toString();
@@ -166,7 +170,7 @@ function Home() {
   }, [])
 
   useEffect(() => {
-    handleFetchMember();
+    handleFetchMember(null, 1);
   }, [])
 
   return (
