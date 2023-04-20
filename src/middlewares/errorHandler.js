@@ -24,14 +24,6 @@ const errorHandler = async (error, req, res, next) => {
       payload.stack = error.stack;
     }
 
-    if (error.t) {
-      try {
-        await error.t.rollback();
-      } catch (e) {
-        console.log('ROLLBACK ERROR')
-      }
-    }
-
     return response.sendJson(res, payload)
   }
 

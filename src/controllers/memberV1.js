@@ -6,11 +6,9 @@ const {
   Sequelize: {
     col,
     fn,
-    literal
   }
 } = require('../models');
-const response = require('../utils/response')
-
+const response = require('../utils/response');
 
 exports.getMemberList = async (req, res, next) => {
   const {
@@ -106,9 +104,7 @@ exports.migrateMember = async (req, res, next) => {
     }
   } = req;
 
-  let t = null;
   try {
-    t = await sequelize.transaction()
     const member = await Member.findByPk(memberId);
 
     if (member === null) {
@@ -117,13 +113,7 @@ exports.migrateMember = async (req, res, next) => {
         message: 'Member not found',
       };
     }
-
-
-    member.updatedBy = authId;
-    member.parentId = parentId
-
-    const lastPromises = [member.save({ transaction: t })];
-
+    
     let newParent = null
     if (parentId) {
       newParent = await Member.findByPk(parentId);
@@ -138,20 +128,25 @@ exports.migrateMember = async (req, res, next) => {
 
     const previousParent = await member.getParent();
 
-    if (previousParent) {
-      previousParent.updatedBy = authId;
-      lastPromises.push(previousParent.save({ transaction: t }))
-    }
+    const lastPromises = [];
+    const saveActions = await sequelize.transaction(async (t) => {
+      if (previousParent) {
+        previousParent.updatedBy = authId;
+        lastPromises.push(previousParent.save({ transaction: t }))
+      }
+      
+      if (newParent) {
+        newParent.updatedBy = authId;
+        lastPromises.push(newParent.save({ transaction: t }))
+      }
+  
+      member.updatedBy = authId;
+      member.parentId = parentId
+  
+      lastPromises.push(member.save({ transaction: t }))
 
-    if (newParent) {
-      newParent.updatedBy = authId;
-      lastPromises.push(newParent.save({ transaction: t }))
-    }
-
-    const saveActions = await Promise.all(lastPromises)
-
-
-    await t.commit()
+      return Promise.all(lastPromises)
+    })
 
     return response.sendJson(res, {
       status: StatusCodes.CREATED,
@@ -161,7 +156,8 @@ exports.migrateMember = async (req, res, next) => {
       }
     })
   } catch (error) {
-    next({ ...error, t })
+    console.log(error.message)
+    next(error)
   }
 }
 

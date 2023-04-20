@@ -1,7 +1,10 @@
 var express = require('express');
 
-const memberV1 = require('../controllers/memberV1');
-const errorController = require('../controllers/errorController')
+const memberController = require('../controllers/memberV1');
+const memberSchema = require('../controllers/schemas/memberV1');
+const errorController = require('../controllers/errorController');
+
+const validateSchema = require('../middlewares/validateSchema');
 
 const apiRouter = () => {
   var router = express.Router();
@@ -11,18 +14,18 @@ const apiRouter = () => {
 
   router
     .route('/v1/members')
-    .get(memberV1.getMemberList)
-    .post(memberV1.createMember)
+    .get(validateSchema(memberSchema.getMemberList), memberController.getMemberList)
+    .post(validateSchema(memberSchema.createMember), memberController.createMember)
     .all(errorController.methodNotAllowed)
 
   router
     .route('/v1/members/:memberId/bonuses')
-    .get(memberV1.calculateBonuses)
+    .get(validateSchema(memberSchema.calculateBonuses), memberController.calculateBonuses)
     .all(errorController.methodNotAllowed)
 
   router
     .route('/v1/members/:memberId/migrate')
-    .post(memberV1.migrateMember)
+    .post(validateSchema(memberSchema.migrateMember), memberController.migrateMember)
     .all(errorController.methodNotAllowed)
 
   return router
