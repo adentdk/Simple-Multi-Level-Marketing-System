@@ -26,10 +26,15 @@ export default function CalculateBonus({ onSubmit, onReset, totalBonuses = null 
           type="submit">
           submit
         </button>
+        <button
+          className={'w-full lg:w-fit h-10 py-px px-8 rounded-full uppercase text-sm text-white font-semibold bg-red-600'}
+          type="reset">
+          reset
+        </button>
         {totalBonuses !== null && (
           <div className="w-full bg-green-100 p-4 rounded-md flex justify-between items-center">
             <div>
-              This member bonus is: <span className="font-bold">{totalBonuses}</span>
+              Bonus member ini adalah: <span className="font-bold">$ {totalBonuses}</span>
             </div>
 
             <button className="text-white font-semibold bg-red-600 rounded-full w-8 h-8 flex justify-center items-center text-center" type="reset">&#x2715;</button>

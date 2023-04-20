@@ -25,6 +25,12 @@ export default function AddNewMember({ onSubmit }) {
           type="submit">
           submit
         </button>
+
+        <button
+          className={'w-full lg:w-fit h-10 py-px px-8 rounded-full uppercase text-sm text-white font-semibold bg-red-600'}
+          type="reset">
+          reset
+        </button>
       </form>
     </figure>
   )
