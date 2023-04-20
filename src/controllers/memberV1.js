@@ -242,7 +242,7 @@ exports.calculateBonuses = async (req, res, next) => {
 
     return response.sendJson(res, {
       status: StatusCodes.OK,
-      data: total
+      data: total || 0
     })
 
   } catch (error) {
