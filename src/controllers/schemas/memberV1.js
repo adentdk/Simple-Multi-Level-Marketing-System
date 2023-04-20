@@ -3,7 +3,7 @@ const { object, string, number } = require("yup");
 exports.getMemberList = object({
   query: object({
     parentId: number().optional(),
-    deep: number().optional()
+    deep: number().max(7).min(0).optional()
   })
 })
 

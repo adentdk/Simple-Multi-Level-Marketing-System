@@ -9,11 +9,13 @@ const {
   }
 } = require('../models');
 const response = require('../utils/response');
+const { generateNestedInclude, generateGroupBy } = require('../utils/sequelize');
 
 exports.getMemberList = async (req, res, next) => {
   const {
     query: {
-      parentId = null
+      parentId = null,
+      deep: rawDeep = 0,
     }
   } = req;
 
@@ -21,17 +23,25 @@ exports.getMemberList = async (req, res, next) => {
     parentId
   };
 
+  const deep = parseInt(rawDeep, 10);
+
+  const groupBy = generateGroupBy(deep);
+
   try {
     const members = await Member.findAll({
       where: whereOptions,
-      include: [
+      include: deep > 0 ? [generateNestedInclude(
+        Member,
+        'children',
+        deep,
+        // custom last item
         {
           model: Member,
           as: 'children',
           attributes: {
             include: [
-              [fn('COUNT', col('"children->children".id')), 'nextLevelCount']
-            ],
+              [fn('COUNT', col(groupBy.at(-1))), 'nextLevelCount']
+            ]
           },
           include: [
             {
@@ -41,8 +51,9 @@ exports.getMemberList = async (req, res, next) => {
             }
           ]
         }
-      ],
-      group: ['Member.id', 'children.id']
+      )
+      ] : [],
+      group: ['Member.id', ...groupBy]
     });
 
     return response.sendJson(res, {
@@ -113,7 +124,7 @@ exports.migrateMember = async (req, res, next) => {
         message: 'Member not found',
       };
     }
-    
+
     let newParent = null
     if (parentId) {
       newParent = await Member.findByPk(parentId);
@@ -134,15 +145,15 @@ exports.migrateMember = async (req, res, next) => {
         previousParent.updatedBy = authId;
         lastPromises.push(previousParent.save({ transaction: t }))
       }
-      
+
       if (newParent) {
         newParent.updatedBy = authId;
         lastPromises.push(newParent.save({ transaction: t }))
       }
-  
+
       member.updatedBy = authId;
       member.parentId = parentId
-  
+
       lastPromises.push(member.save({ transaction: t }))
 
       return Promise.all(lastPromises)
