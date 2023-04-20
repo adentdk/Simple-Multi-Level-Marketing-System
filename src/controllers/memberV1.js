@@ -2,6 +2,7 @@
 const { StatusCodes } = require('http-status-codes');
 const {
   Member,
+  sequelize,
   Sequelize: {
     col,
     fn,
@@ -25,17 +26,15 @@ exports.getMemberList = async (req, res, next) => {
   try {
     const members = await Member.findAll({
       where: whereOptions,
-      attributes: {
-        include: [
-          [fn('COUNT', col('"children".id')), 'nextLevelCount'],
-          [literal(`(COUNT("children".id) * 1) + COUNT("children->children".id) * 0.5`), 'bonuses']
-        ]
-      },
       include: [
         {
           model: Member,
           as: 'children',
-          attributes: [],
+          attributes: {
+            include: [
+              [fn('COUNT', col('"children->children".id')), 'nextLevelCount']
+            ],
+          },
           include: [
             {
               model: Member,
@@ -45,14 +44,12 @@ exports.getMemberList = async (req, res, next) => {
           ]
         }
       ],
-      group: [
-        'Member.id',
-      ]
+      group: ['Member.id', 'children.id']
     });
 
-    response.sendJson(res, {
+    return response.sendJson(res, {
       status: 200,
-      data: members.map(member => member.toCustomJSON()),
+      data: members,
     })
   } catch (error) {
     next(error);
@@ -66,17 +63,26 @@ exports.createMember = async (req, res, next) => {
     } = {
       userId: null
     },
-    body: memberValues
+    body: { parentId, ...memberValues }
   } = req;
 
   try {
-    const member = await Member.create({
+    const parent = await Member.findByPk(parentId);
+
+    if (!parent) {
+      throw {
+        status: StatusCodes.BAD_REQUEST,
+        message: 'Parent not found'
+      }
+    }
+
+    const member = await parent.createChild({
       ...memberValues,
       createdBy: authId,
       updatedBy: authId,
     });
 
-    response.sendJson(res, {
+    return response.sendJson(res, {
       status: StatusCodes.CREATED,
       data: member
     })
@@ -93,14 +99,16 @@ exports.migrateMember = async (req, res, next) => {
       userId: null
     },
     body: {
-      parentId,
+      parentId = null,
     },
     params: {
       memberId,
     }
   } = req;
 
+  let t = null;
   try {
+    t = await sequelize.transaction()
     const member = await Member.findByPk(memberId);
 
     if (member === null) {
@@ -110,18 +118,99 @@ exports.migrateMember = async (req, res, next) => {
       };
     }
 
-    member.parentId = parentId;
+
     member.updatedBy = authId;
+    member.parentId = parentId
 
-    const saveAction = await member.save();
+    const lastPromises = [member.save({ transaction: t })];
 
-    response.sendJson(res, {
+    let newParent = null
+    if (parentId) {
+      newParent = await Member.findByPk(parentId);
+
+      if (!newParent) {
+        throw {
+          status: StatusCodes.BAD_REQUEST,
+          message: 'Parent not found'
+        }
+      }
+    }
+
+    const previousParent = await member.getParent();
+
+    if (previousParent) {
+      previousParent.updatedBy = authId;
+      lastPromises.push(previousParent.save({ transaction: t }))
+    }
+
+    if (newParent) {
+      newParent.updatedBy = authId;
+      lastPromises.push(newParent.save({ transaction: t }))
+    }
+
+    const saveActions = await Promise.all(lastPromises)
+
+
+    await t.commit()
+
+    return response.sendJson(res, {
       status: StatusCodes.CREATED,
       data: member,
       meta: {
-        saveAction
+        saveActions
       }
     })
+  } catch (error) {
+    next({ ...error, t })
+  }
+}
+
+exports.calculateBonuses = async (req, res, next) => {
+  const {
+    params: {
+      memberId,
+    },
+    query: {
+      level = 'all'
+    }
+  } = req;
+
+  const level1 = level === '1' || level === 'all'
+  const level2 = level === '2' || level === 'all'
+
+  try {
+    const member = await Member.findByPk(memberId);
+
+    const promises = [];
+
+    if (level1) {
+      promises.push(member.countChildren())
+    }
+
+    if (level2) {
+      const children = await member.getChildren();
+
+      promises.push(...children.map(child => child.countChildren()))
+    }
+
+    const [firstResult, ...restResult] = await Promise.all(promises);
+
+    let total = 0;
+
+    if (level === '1') {
+      total += firstResult;
+    } else if (level === '2') {
+      total += [firstResult, ...restResult].reduce((a, b) => a + b * 0.5, 0);
+    } else {
+      total += firstResult;
+      total += restResult.reduce((a, b) => a + b * 0.5, 0);
+    }
+
+    return response.sendJson(res, {
+      status: StatusCodes.OK,
+      data: total
+    })
+
   } catch (error) {
     next(error)
   }

@@ -14,7 +14,17 @@ const apiRouter = () => {
     .get(memberV1.getMemberList)
     .post(memberV1.createMember)
     .all(errorController.methodNotAllowed)
-    
+
+  router
+    .route('/v1/members/:memberId/bonuses')
+    .get(memberV1.calculateBonuses)
+    .all(errorController.methodNotAllowed)
+
+  router
+    .route('/v1/members/:memberId/migrate')
+    .post(memberV1.migrateMember)
+    .all(errorController.methodNotAllowed)
+
   return router
 }
 

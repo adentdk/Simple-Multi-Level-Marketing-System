@@ -1,25 +1,31 @@
 import { useCallback, useEffect, useState } from "react"
 import MemberTreeView from "./components/MemberTreeView";
 import AddNewMember from "./components/AddNewMember";
+import CalculateBonus from "./components/CalculateBonus";
+import MigrateMember from "./components/MigrateMember";
 
 function Home() {
   const [loading, setLoading] = useState(false);
   const [members, setMembers] = useState([]);
+  const [memberBonus, setMemberBonus] = useState(null);
 
   const handleFetchMember = useCallback((parentId = null) => {
     setLoading(true);
 
-    let params = {}
+    let query = {}
 
     if (parentId) {
-      params.parentId = parentId;
+      query.parentId = parentId;
     }
 
-    params = new URLSearchParams(params).toString();
+    query = new URLSearchParams(query).toString();
 
-    fetch(`/api/v1/members?${params}`)
-      .then(res => res.json())
+    fetch(`/api/v1/members?${query}`)
       .then(res => {
+        return res.json()
+      })
+      .then(res => {
+        if (res.error) throw res;
         if (!parentId) {
           setMembers(res.data)
           return;
@@ -81,8 +87,11 @@ function Home() {
       },
       body: JSON.stringify(body)
     })
-      .then(res => res.json())
       .then(res => {
+        return res.json()
+      })
+      .then(res => {
+        if (res.error) throw res;
         const newMember = res.data;
 
         if (!newMember.parentId) {
@@ -100,13 +109,71 @@ function Home() {
 
   })
 
+  const handleMigrateMember = useCallback(e => {
+    e.preventDefault();
+
+    setLoading(true)
+
+    const formData = new FormData(e.target);
+    formData.forEach((value, key, _formData) => {
+      if (!value) _formData.delete(key);
+    })
+    const body = Object.fromEntries(formData)
+
+    fetch(`/api/v1/members/${body.memberId}/migrate`, {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body)
+    })
+      .then(res => {
+        return res.json()
+      })
+      .then(res => {
+        if (res.error) throw res;
+        handleFetchMember()
+      })
+      .catch(e => {
+        alert(e.message)
+      })
+      .finally(setLoading(false))
+
+  })
+
+  const handleCalculateBonus = useCallback((e) => {
+    e.preventDefault();
+
+    setLoading(true)
+
+    const formData = new FormData(e.target);
+    formData.forEach((value, key, _formData) => {
+      if (!value) _formData.delete(key);
+    })
+    const body = Object.fromEntries(formData)
+    const query = new URLSearchParams(formData).toString()
+
+    fetch(`/api/v1/members/${body.memberId}/bonuses?${query}`)
+      .then(res => {
+        return res.json()
+      })
+      .then(res => {
+        if (res.error) throw res;
+        setMemberBonus(res.data)
+      })
+      .catch(e => { alert(e.message); console.log(e) })
+      .finally(() => setLoading(false))
+  }, [])
+
   useEffect(() => {
     handleFetchMember();
   }, [])
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10 space-y-8">
+      <CalculateBonus onSubmit={handleCalculateBonus} onReset={() => setMemberBonus(null)} totalBonuses={memberBonus} />
       <AddNewMember onSubmit={handleAddMember} />
+      <MigrateMember onSubmit={handleMigrateMember} />
       <MemberTreeView members={members} fetchMember={handleFetchMember} />
     </div>
   )

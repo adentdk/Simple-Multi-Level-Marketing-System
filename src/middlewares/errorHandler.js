@@ -7,6 +7,7 @@ const errorHandler = async (error, req, res, next) => {
     const status = error.status || StatusCodes.INTERNAL_SERVER_ERROR;
 
     const payload = {
+      error: true,
       message: error.message,
       status,
       data: null,
@@ -19,7 +20,7 @@ const errorHandler = async (error, req, res, next) => {
       }
     }
 
-    if (process.env === 'development') {
+    if (process.env.NODE_ENV === 'development') {
       payload.stack = error.stack;
     }
 

@@ -7,7 +7,7 @@ export default function MemberTreeView({members, fetchMember}) {
   const memberTreeComponents = useMemo(() => {
     const mapMember = (_members, level) => {
       return _members.map((member, index) => {
-        const showLoadMore = member.nextLevelCount > 0 && !member.fetched;
+        const showLoadMore = member.nextLevelCount > 0 && !member.children?.length;
 
         const handleClick = () => {
           handleFetchMember(member.id)
@@ -38,7 +38,7 @@ export default function MemberTreeView({members, fetchMember}) {
                 </button>
               )}
             </div>
-            {member.children?.length && (
+            {member.children?.length > 0 && (
               <ul>
                 {mapMember(member.children, level + 1)}
               </ul>

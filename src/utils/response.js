@@ -1,7 +1,10 @@
-exports.sendJson = (res, { status = 200, data = null, message = 'OK', meta, stack = null }) => {
+const { getReasonPhrase } = require("http-status-codes")
+
+exports.sendJson = (res, { error = false, status = 200, data = null, message = getReasonPhrase(status), meta, stack = null }) => {
   return res
     .status(status)
     .json({
+      error,
       status,
       data,
       message,
