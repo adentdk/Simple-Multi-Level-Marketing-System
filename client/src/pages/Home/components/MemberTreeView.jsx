@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 
-export default function MemberTreeView({members, fetchMember}) {
+export default function MemberTreeView({ members, fetchMember }) {
 
   const handleFetchMember = useCallback((id) => fetchMember(id), [fetchMember])
 
@@ -53,15 +53,18 @@ export default function MemberTreeView({members, fetchMember}) {
   }, [members]);
 
   return (
-    <div className="flex flex-col bg-slate-200 w-full h-[100vh] lg:h-[60vh] overflow-y-auto overflow-x-auto border-blue-900 border">
-      <ul className="tree">
-        <li>
-          <div className="box">ADMIN</div>
-          <ul>
-            {memberTreeComponents}
-          </ul>
-        </li>
-      </ul>
-    </div>
+    <figure className="flex flex-col w-full h-[100vh] lg:h-[60vh] border-blue-900 border rounded-md relative">
+      <figcaption className="uppercase font-medium  p-4">migrasi member / pindah member</figcaption>
+      <div className="overflow-y-auto bg-slate-200 overflow-x-auto p-4">
+        <ul className="tree">
+          <li>
+            <div className="box">ADMIN</div>
+            <ul>
+              {memberTreeComponents}
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </figure>
   )
 }
