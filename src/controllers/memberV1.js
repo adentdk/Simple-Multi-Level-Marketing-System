@@ -9,51 +9,64 @@ const {
   }
 } = require('../models');
 const response = require('../utils/response');
-const { generateNestedInclude, generateGroupBy } = require('../utils/sequelize');
 
 exports.getMemberList = async (req, res, next) => {
   const {
     query: {
       parentId = null,
-      deep: rawDeep = 0,
+      deep: rawDeep = '0',
     }
   } = req;
+
+  const deep = parseInt(rawDeep, 10)
 
   const whereOptions = {
     parentId
   };
 
-  const deep = parseInt(rawDeep, 10);
+  let parentAttributes = {
+    include: [[fn('COUNT', col('"children".id')), 'nextLevelCount']]
+  };
 
-  const groupBy = generateGroupBy(deep);
+  let parentInclude = [
+    {
+      model: Member,
+      as: 'children',
+      attributes: []
+    }
+  ]
+
+  let parentGrup = ['Member.id']
+
+  if (deep) {
+    parentAttributes.include = []
+    parentInclude = [
+      {
+        model: Member,
+        as: 'children',
+        attributes: {
+          include: [
+            [fn('COUNT', col('"children->children".id')), 'nextLevelCount']
+          ],
+        },
+        include: [
+          {
+            model: Member,
+            as: 'children',
+            attributes: []
+          }
+        ]
+      }
+    ]
+    parentGrup.push('children.id')
+  }
 
   try {
     const members = await Member.findAll({
       where: whereOptions,
-      include: deep > 0 ? [generateNestedInclude(
-        Member,
-        'children',
-        deep,
-        // custom last item
-        {
-          model: Member,
-          as: 'children',
-          attributes: {
-            include: [
-              [fn('COUNT', col(groupBy.at(-1))), 'nextLevelCount']
-            ]
-          },
-          include: [
-            {
-              model: Member,
-              as: 'children',
-              attributes: []
-            }
-          ]
-        }
-      )
-      ] : [],
-      group: ['Member.id', ...groupBy]
+      attributes: parentAttributes,
+      include: parentInclude,
+      group: parentGrup
     });
 
     return response.sendJson(res, {
