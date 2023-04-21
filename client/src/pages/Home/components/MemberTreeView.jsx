@@ -53,9 +53,9 @@ export default function MemberTreeView({ members, fetchMember }) {
   }, [members]);
 
   return (
-    <figure className="flex flex-col w-full border-blue-900 border rounded-md relative">
-      <figcaption className="uppercase font-medium  p-4">migrasi member / pindah member</figcaption>
-      <div className="h-[100vh] lg:h-[60vh] overflow-y-auto bg-slate-200 overflow-x-auto p-4">
+    <figure className="border-blue-900 border rounded-md">
+      <figcaption className="uppercase font-medium p-4">pohon hirarki member</figcaption>
+      <div className="flex flex-col w-full h-[100vh] lg:h-[60vh] overflow-y-auto bg-slate-200 overflow-x-auto p-4">
         <ul className="tree">
           <li>
             <div className="box">ADMIN</div>
