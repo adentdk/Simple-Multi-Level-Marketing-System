@@ -58,7 +58,7 @@ export default function MemberTreeView({ members, fetchMember }) {
       <div className="flex flex-col w-full h-[100vh] lg:h-[60vh] overflow-y-auto bg-slate-200 overflow-x-auto p-4">
         <ul className="tree">
           <li>
-            <div className="box">ADMIN</div>
+            <div className="box">Pohon Hirarki Member</div>
             <ul>
               {memberTreeComponents}
             </ul>
