@@ -14,7 +14,7 @@ module.exports = {
         // id: 1,
         name: 'aden trisna',
         parentId: null,
-        userId: 2,
+        userId: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },

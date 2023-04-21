@@ -20,16 +20,6 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-      {
-        // id: 2,
-        name: 'aden trisna',
-        username: 'adentdk',
-        password: '$2b$10$gCRzK6ovw.tSkmr6F57ueOrzlxy7PW/uDPc7Ul1/GyuThSeIR5rl2', // 123456
-        phoneNumber: '083147324890',
-        roleId: 2, // user
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }
     ], {});
   },
 

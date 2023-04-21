@@ -1,4 +1,7 @@
 'use strict';
+const password = require('../utils/password')
+const jwt = require('../utils/jwt')
+
 const {
   Model
 } = require('sequelize');
@@ -16,7 +19,37 @@ module.exports = (sequelize, DataTypes) => {
         as: 'role'
       })
     }
+
+    static findByUsername(username, { where, ...options } = {}) {
+      return this.findOne({
+        where: {
+          ...where,
+          username,
+        },
+        ...options,
+      });
+    }
+
+    async comparePassword(plainPassword) {
+      const isCompare = await password.compare(plainPassword, this.password);
+
+      if (isCompare) {
+        return Promise.resolve(true);
+      }
+      return Promise.resolve(false);
+    }
+
+    getToken() {
+      const payload = {
+        userId: this.id,
+      };
+
+      return {
+        accessToken: jwt.signToken(payload, process.env.JWT_SECRET),
+      };
+    }
   }
+
   User.init({
     name: {
       type: DataTypes.STRING(32),
@@ -72,6 +105,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
+    freezeTableName: true,
     paranoid: true
   });
   return User;

@@ -2,15 +2,27 @@ var express = require('express');
 
 const memberController = require('../controllers/memberV1');
 const memberSchema = require('../controllers/schemas/memberV1');
+
+const authController = require('../controllers/authV1')
+const authSchema = require('../controllers/schemas/authV1')
+
 const errorController = require('../controllers/errorController');
 
 const validateSchema = require('../middlewares/validateSchema');
+const mustLogin = require('../middlewares/mustLogin');
 
 const apiRouter = () => {
   var router = express.Router();
 
   router.use(express.json());
   router.use(express.urlencoded({ extended: false }));
+
+  router
+    .route('/v1/login')
+    .post(validateSchema(authSchema.login), authController.login)
+    .all(errorController.methodNotAllowed)
+
+  router.use(mustLogin)
 
   router
     .route('/v1/members')

@@ -3,6 +3,8 @@ import MemberTreeView from "./components/MemberTreeView";
 import AddNewMember from "./components/AddNewMember";
 import CalculateBonus from "./components/CalculateBonus";
 import MigrateMember from "./components/MigrateMember";
+import localforage from "localforage";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [loading, setLoading] = useState(false);
@@ -169,17 +171,48 @@ function Home() {
       .finally(() => setLoading(false))
   }, [])
 
+  const handleLogout = useCallback(e => {
+    e.preventDefault();
+
+    localforage.removeItem('token').then(() => {
+      window.location.reload()
+    })
+  })
+
   useEffect(() => {
     handleFetchMember(null, 1);
   }, [])
 
+
+  const navigate = useNavigate();
+  useEffect(() => {
+    localforage.getItem('token').then((token) => {
+      if (token) return;
+      navigate('/login')
+    })
+  }, [])
+
   return (
-    <div className="container mx-auto py-10 space-y-8">
-      <CalculateBonus onSubmit={handleCalculateBonus} onReset={() => setMemberBonus(null)} totalBonuses={memberBonus} />
-      <AddNewMember onSubmit={handleAddMember} />
-      <MigrateMember onSubmit={handleMigrateMember} />
-      <MemberTreeView members={members} fetchMember={handleFetchMember} />
-    </div>
+    <>
+      <div className="container mx-auto py-10 space-y-8">
+        <a
+          className={'w-full lg:w-fit flex items-center h-10 py-px px-8 rounded-full uppercase text-sm text-white font-semibold bg-red-600'}
+          href="/logout"
+          onClick={handleLogout}>
+          Logout
+        </a>
+        <CalculateBonus onSubmit={handleCalculateBonus} onReset={() => setMemberBonus(null)} totalBonuses={memberBonus} />
+        <AddNewMember onSubmit={handleAddMember} />
+        <MigrateMember onSubmit={handleMigrateMember} />
+        <MemberTreeView members={members} fetchMember={handleFetchMember} />
+      </div>
+
+      {loading && (
+        <div className="absolute z-10 bg-black bg-opacity-40 top-0 left-0 right-0 bottom-0 flex justify-center items-center">
+          <h1 className="uppercase text-center text-white text-9xl">loading</h1>
+        </div>
+      )}
+    </>
   )
 }
 
