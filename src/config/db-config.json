@@ -1,4 +1,8 @@
 {
+  "local": {
+    "dialect": "sqlite",
+    "storage": "database.sqlite"
+  },
   "development": {
     "username": "postgres",
     "password": "paketchat",
