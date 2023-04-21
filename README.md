@@ -1,5 +1,12 @@
 # Simple Multi Level Marketing System
 This application was developed using ExpressJS technology to build the backend, with Sequelize as the ORM to facilitate access to the database.
+
+- [Simple Multi Level Marketing System](#simple-multi-level-marketing-system)
+  - [Project Structure](#project-structure)
+  - [How to run locally](#how-to-run-locally)
+    - [Run server](#run-server)
+    - [Run client](#run-client)
+  - [Conclusion](#conclusion)
 ## Project Structure
 
 ```
@@ -79,10 +86,9 @@ This application was developed using ExpressJS technology to build the backend, 
 │       └── sequelize.js
 └── template.env
 ```
-
-## How to run server locally
+## How to run locally
 Make sure Node.js V18.16.0 is installed on the local computer. If not, download and install Node.js from https://nodejs.org/.
-### Steps
+### Run server
 - Clone or download the project repository and navigate to the repository folder.
   ```
   #clone projet using ssh
@@ -112,6 +118,7 @@ That's it! You should now be able to access the API at http://localhost:3000/. Y
 ```
   docs/******.postman_collection.json
 ```
+### Run client
 You can also try it out using a simple web application that we have prepared. Follow these instructions to run the simple web application that we have prepared locally.
 - Navigate to client folder:
   ```
@@ -125,7 +132,6 @@ You can also try it out using a simple web application that we have prepared. Fo
   ```
   npm run dev
   ```
-  
-And the web application can be accessed at http://localhost:5173/.
-## Conclusion:
+That's it! You should now be able to access the web application by navigating to http://localhost:5173/ in your browser.
+## Conclusion
 this documentation provides a brief overview of the project structure, how to set up and run the project locally, and how to access the API and web application. We hope this documentation has been helpful in understanding the project and getting started with it. Feel free to contribute to the project and submit any issues or feedback.
