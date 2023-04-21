@@ -1,9 +1,9 @@
 {
-  "local": {
+  "development": {
     "dialect": "sqlite",
     "storage": "database.sqlite"
   },
-  "development": {
+  "development2": {
     "username": "postgres",
     "password": "paketchat",
     "database": "test_Sistem MLM Sederhana",
