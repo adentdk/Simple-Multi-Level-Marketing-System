@@ -85,8 +85,11 @@ Make sure Node.js V18.16.0 is installed on the local computer. If not, download 
 ### Steps
 - Clone or download the project repository and navigate to the repository folder.
   ```
-  git clone [repository_url]
-  cd [repository_name]
+  # clone projet using ssh
+  git clone git@github.com:adentdk/Simple-Multi-Level-Marketing-System.git
+  
+  #change current working directory
+  cd Simple-Multi-Level-Marketing-System
   ```
 - Install the dependencies using the following command:
   ```
