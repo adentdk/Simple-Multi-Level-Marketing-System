@@ -3,7 +3,7 @@
     "dialect": "sqlite",
     "storage": "database.sqlite"
   },
-  "development2": {
+  "staging": {
     "username": "postgres",
     "password": "paketchat",
     "database": "test_Sistem MLM Sederhana",
