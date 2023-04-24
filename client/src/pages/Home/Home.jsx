@@ -5,6 +5,7 @@ import CalculateBonus from "./components/CalculateBonus";
 import MigrateMember from "./components/MigrateMember";
 import localforage from "localforage";
 import { useNavigate } from "react-router-dom";
+import fetcher from "../../utils/fetcher";
 
 function Home() {
   const [loading, setLoading] = useState(false);
@@ -24,9 +25,7 @@ function Home() {
       query.deep = deep;
     }
 
-    query = new URLSearchParams(query).toString();
-
-    fetch(`/api/v1/members?${query}`)
+    fetcher(`/api/v1/members`, { query })
       .then(res => {
         return res.json()
       })
@@ -80,18 +79,11 @@ function Home() {
 
     setLoading(true)
 
-    const formData = new FormData(e.target);
-    formData.forEach((value, key, _formData) => {
-      if (!value) _formData.delete(key);
-    })
-    const body = Object.fromEntries(formData)
+    const body = new FormData(e.target);
 
-    fetch('/api/v1/members', {
+    fetcher('/api/v1/members', {
       method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body)
+      body,
     })
       .then(res => {
         return res.json()
@@ -128,10 +120,7 @@ function Home() {
 
     fetch(`/api/v1/members/${body.memberId}/migrate`, {
       method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body)
+      body: formData
     })
       .then(res => {
         return res.json()
@@ -157,9 +146,8 @@ function Home() {
       if (!value) _formData.delete(key);
     })
     const body = Object.fromEntries(formData)
-    const query = new URLSearchParams(formData).toString()
 
-    fetch(`/api/v1/members/${body.memberId}/bonuses?${query}`)
+    fetcher(`/api/v1/members/${body.memberId}/bonuses`, {query: formData})
       .then(res => {
         return res.json()
       })

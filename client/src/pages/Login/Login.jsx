@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import localforage from 'localforage'
 import { useNavigate } from "react-router-dom";
+import fetcher from "../../utils/fetcher";
 
 function Login() {
   const [loading, setLoading] = useState(false)
@@ -10,18 +11,11 @@ function Login() {
 
     setLoading(true)
 
-    const formData = new FormData(e.target);
-    formData.forEach((value, key, _formData) => {
-      if (!value) _formData.delete(key);
-    })
-    const body = Object.fromEntries(formData)
-
-    fetch('/api/v1/login', {
+    const body = new FormData(e.target);
+   
+    fetcher('/api/v1/login', {
       method: 'POST',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body)
+      body,
     })
       .then(res => {
         return res.json()
