@@ -25,7 +25,7 @@ exports.getMemberList = async (req, res, next) => {
   };
 
   let parentAttributes = {
-    include: [[fn('COUNT', col('"children".id')), 'nextLevelCount']]
+    include: [[fn('COUNT', col('children.id')), 'nextLevelCount']]
   };
 
   let parentInclude = [
@@ -46,7 +46,7 @@ exports.getMemberList = async (req, res, next) => {
         as: 'children',
         attributes: {
           include: [
-            [fn('COUNT', col('"children->children".id')), 'nextLevelCount']
+            [fn('COUNT', col('children->children.id')), 'nextLevelCount']
           ],
         },
         include: [
