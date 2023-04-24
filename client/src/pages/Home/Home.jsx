@@ -118,7 +118,7 @@ function Home() {
     })
     const body = Object.fromEntries(formData)
 
-    fetch(`/api/v1/members/${body.memberId}/migrate`, {
+    fetcher(`/api/v1/members/${body.memberId}/migrate`, {
       method: 'POST',
       body: formData
     })
